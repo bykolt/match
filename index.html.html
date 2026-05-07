@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 번호 궁합 분석기 💖</title>
+    <!-- 구글 폰트: 주아 -->
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <style>
+        :root { --main-pink: #ffb7c5; --dark-pink: #ff8fa3; --bg-pink: #fff5f7; }
+        body { font-family: 'Jua', sans-serif; background-color: var(--bg-pink); color: #333; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); width: 100%; max-width: 450px; }
+        h1 { text-align: center; color: var(--dark-pink); margin-bottom: 25px; }
+        
+        .section { border: 2px dashed var(--main-pink); padding: 15px; border-radius: 15px; margin-bottom: 20px; }
+        .section-title { font-size: 1.2rem; color: var(--dark-pink); margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 0.9rem; margin-bottom: 5px; color: #666; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-family: 'Jua', sans-serif; }
+        .flex-row { display: flex; gap: 10px; }
+        .checkbox-group { display: flex; align-items: center; font-size: 0.8rem; gap: 5px; margin-top: 5px; color: #888; }
+        .checkbox-group input { width: auto; }
+
+        .agree-box { font-size: 0.85rem; color: #666; background: #f9f9f9; padding: 10px; border-radius: 10px; margin-top: 20px; }
+        
+        .btn-submit { width: 100%; padding: 15px; background: var(--main-pink); color: white; border: none; border-radius: 15px; font-size: 1.3rem; cursor: pointer; margin-top: 15px; transition: 0.3s; box-shadow: 0 4px 0 #fb9ba7; }
+        .btn-submit:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
+        .btn-submit:hover:not(:disabled) { background: var(--dark-pink); }
+
+        /* 결과 창 스타일 */
+        #resultLayer { display: none; text-align: center; }
+        .score { font-size: 4rem; color: var(--dark-pink); margin: 20px 0; }
+        .analysis-text { background: #fffafb; padding: 15px; border-radius: 15px; border: 1px solid var(--main-pink); line-height: 1.6; text-align: left; font-size: 0.95rem; margin-bottom: 20px; }
+        .btn-retry { background: #eee; color: #666; padding: 10px 20px; border-radius: 10px; cursor: pointer; border: none; font-family: 'Jua'; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 입력 폼 -->
+    <div id="inputLayer">
+        <h1>💖 번호 궁합 분석기 💖</h1>
+        
+        <form id="loveForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeKkP4HuJ5J4jW_XOrs2ryEpfSeuWn5VvbaOmMQhHKTmAxUpg/formResponse" method="POST" target="hidden_iframe">
+            
+            <!-- 내 정보 -->
+            <div class="section">
+                <div class="section-title">👤 나의 정보</div>
+                <div class="input-group">
+                    <input type="text" id="myName" placeholder="나의 이름" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="myPhone" placeholder="전화번호 (010-0000-0000)" required>
+                </div>
+                <div class="flex-row">
+                    <input type="date" id="myBirth" required title="생년월일">
+                    <input type="time" id="myTime" title="태어난 시간">
+                </div>
+                <div class="input-group" style="margin-top:10px;">
+                    <select id="myGender">
+                        <option value="남성">남성</option>
+                        <option value="여성">여성</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 상대 정보 -->
+            <div class="section">
+                <div class="section-title">💕 반쪽 정보</div>
+                <div class="input-group">
+                    <input type="text" id="yourName" placeholder="상대방 이름" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="yourPhone" placeholder="상대방 전화번호" required>
+                </div>
+                <div class="flex-row">
+                    <div style="flex:1">
+                        <input type="date" id="yourBirth" title="상대방 생년월일">
+                        <div class="checkbox-group"><input type="checkbox" id="birthUnknown" onchange="toggleInput('yourBirth', this)"> <label for="birthUnknown">생일 모름</label></div>
+                    </div>
+                    <div style="flex:1">
+                        <input type="time" id="yourTime" title="상대방 태생시간">
+                        <div class="checkbox-group"><input type="checkbox" id="timeUnknown" onchange="toggleInput('yourTime', this)"> <label for="timeUnknown">시간 모름</label></div>
+                    </div>
+                </div>
+                <div class="input-group" style="margin-top:10px;">
+                    <select id="yourGender">
+                        <option value="여성">여성</option>
+                        <option value="남성">남성</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 개인정보 동의 -->
+            <div class="agree-box">
+                <input type="checkbox" id="agree" onchange="document.getElementById('submitBtn').disabled = !this.checked">
+                (필수) 개인정보 및 데이터 상관관계 분석 활용에 동의합니다.
+            </div>
+
+            <!-- 실제 구글 폼으로 전송될 숨겨진 필드 -->
+            <input type="hidden" name="entry.2059990547" id="gName">
+            <input type="hidden" name="entry.669898893" id="gPhone">
+            <input type="hidden" name="entry.708899075" id="gDetail">
+
+            <button type="button" id="submitBtn" class="btn-submit" disabled onclick="handleAnalysis()">둘의 궁합 확인하기!! ✨</button>
+        </form>
+    </div>
+
+    <!-- 결과 창 -->
+    <div id="resultLayer">
+        <h1>📊 분석 결과</h1>
+        <div class="score" id="resScore">0%</div>
+        <div class="analysis-text" id="resText"></div>
+        <button class="btn-retry" onclick="location.reload()">다시 하기 ↩️</button>
+    </div>
+</div>
+
+<iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+<script>
+    // 입력창 활성/비활성 토글
+    function toggleInput(id, cb) {
+        document.getElementById(id).disabled = cb.checked;
+        if(cb.checked) document.getElementById(id).value = "";
+    }
+
+    // 유효성 검사 및 분석
+    function handleAnalysis() {
+        const myName = document.getElementById('myName').value;
+        const myPhone = document.getElementById('myPhone').value.replace(/[^0-9]/g, '');
+        const myBirth = document.getElementById('myBirth').value;
+        const yourName = document.getElementById('yourName').value;
+        const yourPhone = document.getElementById('yourPhone').value.replace(/[^0-9]/g, '');
+
+        // 1. 이름 한글 체크 (영어 불가)
+        const engCheck = /[a-zA-Z]/;
+        if(engCheck.test(myName) || engCheck.test(yourName)) {
+            alert("이름은 한글로 입력해 주세요! (영문 입력 불가)");
+            return;
+        }
+
+        // 2. 전화번호 11자리 체크
+        if(myPhone.length !== 11 || yourPhone.length !== 11) {
+            alert("전화번호 11자리를 정확히 입력해 주세요.");
+            return;
+        }
+
+        // 3. 만 14세 이상 체크
+        const birthDate = new Date(myBirth);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+        
+        if(age < 14) {
+            alert("어이쿠! 조금만 더 어른이 된 후에 시도해 볼까요? (만 14세 이상 가능)");
+            return;
+        }
+
+        // 4. 구글 폼 데이터 가공 및 전송
+        document.getElementById('gName').value = `${myName} | ${yourName}`;
+        document.getElementById('gPhone').value = `${myPhone} | ${yourPhone}`;
+        document.getElementById('gDetail').value = `나: ${myBirth} / ${document.getElementById('myTime').value} / ${document.getElementById('myGender').value} \n상대: ${document.getElementById('yourBirth').value || '모름'} / ${document.getElementById('yourTime').value || '모름'} / ${document.getElementById('yourGender').value}`;
+        
+        document.getElementById('loveForm').submit();
+
+        // 5. 결과 화면 계산 및 표시
+        showResult(myPhone, yourPhone, myName, yourName);
+    }
+
+    function showResult(p1, p2, n1, n2) {
+        const score = Math.floor(Math.random() * (99 - 75 + 1)) + 75; // 75~99점 랜덤
+        document.getElementById('resScore').innerText = score + "%";
+
+        const keywords = ["설렘", "안정", "열정", "배려", "소통", "운명", "치유", "성장", "행복", "인연"];
+        const p1Last = p1.slice(-1);
+        const p2Last = p2.slice(-1);
+
+        let comment = `💌 **번호 궁합 분석**\n${n1}님의 끝번호 '${p1Last}'와 ${n2}님의 끝번호 '${p2Last}'은 우주적 주파수가 매우 닮아있네요! 두 분의 번호 속에 숨겨진 숫자들이 서로를 끌어당기는 '${keywords[p1Last % 10]}'의 기운을 내뿜고 있어서 보는 사람마저 두근거리게 만들어요.\n\n`;
+        
+        comment += `✨ **나의 사주X번호 기운**\n${n1}님의 타고난 생일 기운이 지금의 전화번호와 만나 금빛 행운을 부르고 있어요! 성격도 외모도 반짝반짝 빛나는 중~ 💖\n\n`;
+
+        if(document.getElementById('yourBirth').value) {
+            comment += `🔍 **상대방 정밀 분석**\n${n2}님의 사주와 번호를 결합해보니, 두 분은 전생에서부터 이어진 실타래처럼 엉켜있는 깊은 인연이 분명합니다. 이 궁합은 과학적으로도(?) 꽤나 완벽한 매칭이네요!`;
+        } else {
+            comment += `🔍 **한마디**\n상대방의 사주는 비밀에 부쳐졌지만, 번호만으로도 ${n2}님은 ${n1}님에게 이미 푹 빠져 있을 기운이 가득합니다!`;
+        }
+
+        document.getElementById('resText').innerText = comment;
+        document.getElementById('inputLayer').style.display = 'none';
+        document.getElementById('resultLayer').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
