@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>✨ 신비로운 인연 분석기 ✨</title>
     <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
-    <!-- 이미지 저장을 위한 라이브러리 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         :root {
@@ -30,52 +29,44 @@
         .section-title { color: var(--star-gold); margin-bottom: 15px; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
         
         label { display: block; font-size: 0.85rem; color: var(--light-purple); margin-bottom: 5px; margin-left: 5px; }
-        input, select { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; background: rgba(0,0,0,0.3); color: white; margin-bottom: 12px; font-family: 'Jua'; box-sizing: border-box; font-size: 1rem; }
+        input, select { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; background: rgba(0,0,0,0.3); color: white; margin-bottom: 12px; font-family: 'Jua'; box-sizing: border-box; }
         
         .flex-row { display: flex; gap: 10px; align-items: flex-end; }
         .flex-item { flex: 1; }
         
-        .checkbox-group { display: flex; align-items: center; font-size: 0.8rem; gap: 5px; color: #ccc; margin-top: -8px; margin-bottom: 10px; }
-        .checkbox-group input { width: auto; margin: 0; height: 14px; }
-
         .agree-box { font-size: 0.9rem; color: var(--light-purple); text-align: center; margin: 20px 0; }
-        .btn-submit { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--mystic-purple), #a29bfe); color: white; border: none; border-radius: 20px; font-size: 1.4rem; cursor: pointer; box-shadow: 0 4px 15px rgba(110, 87, 224, 0.4); transition: 0.3s; }
-        .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-submit { width: 100%; padding: 18px; background: linear-gradient(45deg, var(--mystic-purple), #a29bfe); color: white; border: none; border-radius: 20px; font-size: 1.4rem; cursor: pointer; }
 
         #resultLayer { display: none; text-align: center; }
-        .slide { display: none; animation: fadeIn 0.5s ease-in-out; text-align: left; }
+        /* 캡쳐 시 전체가 보이도록 수정 */
+        .slide { display: none; text-align: left; }
         .slide.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .score-circle { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--star-gold); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 20px; color: var(--star-gold); box-shadow: 0 0 20px rgba(255, 249, 196, 0.3); background: rgba(0,0,0,0.2); }
+        
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--star-gold); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 20px; color: var(--star-gold); background: rgba(0,0,0,0.3); }
         
         .analysis-card { background: rgba(255,255,255,0.08); padding: 20px; border-radius: 20px; border-left: 4px solid var(--mystic-purple); margin-bottom: 20px; line-height: 1.8; font-size: 0.95rem; color: #eee; white-space: pre-wrap; word-break: keep-all; }
         .card-sub { color: var(--star-gold); font-size: 1.1rem; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
 
         .nav-btns { display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap; }
-        .btn-nav { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--mystic-purple); background: rgba(110, 87, 224, 0.2); color: white; cursor: pointer; font-family: 'Jua'; min-width: 120px; transition: 0.3s; }
-        .btn-nav:hover { background: var(--mystic-purple); }
-        .btn-nav.next { background: var(--mystic-purple); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .btn-nav { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--mystic-purple); background: rgba(110, 87, 224, 0.2); color: white; cursor: pointer; font-family: 'Jua'; min-width: 100px; }
+        .btn-nav.next { background: var(--mystic-purple); }
         
         .share-group { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 20px; }
-        .btn-share { background: #ff7675; border: none; }
-        .btn-link { background: #00cec9; border: none; }
-
-        /* 이미지 캡쳐를 위한 전용 영역 스탈링 */
-        #captureArea { padding: 20px; background: #1a1a2e; border-radius: 20px; }
+        .btn-kakao { background: #fee500; color: #000; border: none; }
+        .btn-result-link { background: #ff7675; color: #fff; border: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 입력 레이어 -->
+    <!-- 입력 레이어 (결과 모드일 땐 사라짐) -->
     <div id="inputLayer">
         <h1>✨ 운명의 성좌 분석 ✨</h1>
         <form id="loveForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeKkP4HuJ5J4jW_XOrs2ryEpfSeuWn5VvbaOmMQhHKTmAxUpg/formResponse" method="POST" target="hidden_iframe">
             <div class="section">
                 <div class="section-title">🔮 나의 우주</div>
-                <input type="text" id="myName" placeholder="당신의 성함" required>
-                <input type="text" id="myPhone" placeholder="휴대폰 번호 (01012345678)" required>
+                <input type="text" id="myName" placeholder="성함" required>
+                <input type="text" id="myPhone" placeholder="번호 (01012345678)" required>
                 <div class="flex-row">
                     <div class="flex-item"><label>생년월일</label><input type="date" id="myBirth" required></div>
                     <div class="flex-item"><label>태어난 시간</label><input type="time" id="myTime"></div>
@@ -85,22 +76,18 @@
 
             <div class="section">
                 <div class="section-title">🌟 상대의 성좌</div>
-                <input type="text" id="yourName" placeholder="상대방 성함" required>
-                <input type="text" id="yourPhone" placeholder="상대방 번호" required>
+                <input type="text" id="yourName" placeholder="성함" required>
+                <input type="text" id="yourPhone" placeholder="번호" required>
                 <div class="flex-row">
                     <div class="flex-item"><label>생년월일</label><input type="date" id="yourBirth"></div>
                     <div class="flex-item"><label>태어난 시간</label><input type="time" id="yourTime"></div>
-                </div>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="birthUnknown" onchange="document.getElementById('yourBirth').disabled = this.checked; document.getElementById('yourTime').disabled = this.checked;">
-                    <label for="birthUnknown">상대방 정보 모름</label>
                 </div>
                 <select id="yourGender"><option value="여성">여성</option><option value="남성">남성</option></select>
             </div>
 
             <div class="agree-box">
                 <input type="checkbox" id="agree" onchange="document.getElementById('submitBtn').disabled = !this.checked">
-                천문의 흐름과 데이터 분석 활용에 동의합니다.
+                천문의 흐름 데이터 활용 동의
             </div>
 
             <input type="hidden" name="entry.2059990547" id="gName">
@@ -114,22 +101,20 @@
     <!-- 결과 레이어 -->
     <div id="resultLayer">
         <div id="captureArea">
-            <h2 id="resTitle" style="color: var(--star-gold); margin-bottom: 5px; text-align: center;">인연 분석 리포트</h2>
-            <p id="resSubtitle" style="font-size: 0.9rem; color: var(--light-purple); margin-bottom: 20px; text-align: center;"></p>
+            <h2 id="resTitle" style="color: var(--star-gold); margin-bottom: 5px;">인연 분석 리포트</h2>
+            <p id="resSubtitle" style="font-size: 0.9rem; color: var(--light-purple); margin-bottom: 20px;"></p>
             
-            <!-- 슬라이드 1: 점수 및 번호궁합 -->
             <div class="slide active" id="slide1">
                 <div class="score-circle" id="resScore">0%</div>
                 <div class="analysis-card">
-                    <div class="card-sub">🔢 수비학: 번호에 깃든 운명</div>
+                    <div class="card-sub">🔢 수비학: 번호의 속삭임</div>
                     <div id="numAnalysis"></div>
                 </div>
                 <div class="nav-btns">
-                    <button class="btn-nav next" onclick="moveSlide(2)">사주 심층 분석 보기 →</button>
+                    <button class="btn-nav next" onclick="moveSlide(2)">사주 분석 보기 →</button>
                 </div>
             </div>
 
-            <!-- 슬라이드 2: 사주 심층 분석 -->
             <div class="slide" id="slide2">
                 <div class="analysis-card">
                     <div class="card-sub" id="sajuTitle1"></div>
@@ -141,25 +126,24 @@
                 </div>
                 <div class="nav-btns">
                     <button class="btn-nav" onclick="moveSlide(1)">← 이전</button>
-                    <button class="btn-nav next" onclick="moveSlide(3)">운명의 비책 보기 →</button>
+                    <button class="btn-nav next" onclick="moveSlide(3)">최종 조언 보기 →</button>
                 </div>
             </div>
 
-            <!-- 슬라이드 3: 총평 및 공유 -->
             <div class="slide" id="slide3">
                 <div class="analysis-card" style="border-left-color: var(--star-gold);">
-                    <div class="card-sub">📍 인연의 흐름 총평</div>
+                    <div class="card-sub">📍 운명의 총평</div>
                     <div id="finalReview"></div>
                 </div>
                 <div class="analysis-card">
-                    <div class="card-sub">💡 관계 유지를 위한 신의 한 수</div>
+                    <div class="card-sub">💡 관계를 위한 비책</div>
                     <div id="finalAdvice"></div>
                 </div>
                 
                 <div class="share-group">
-                    <button class="btn-nav btn-share" onclick="saveAsImage()">📸 결과 이미지로 저장하기</button>
-                    <button class="btn-nav btn-link" onclick="copyLink()">🔗 테스트 링크 복사하기</button>
-                    <button class="btn-nav" style="background:#444;" onclick="location.reload()">다시 분석하기 ↩️</button>
+                    <button class="btn-nav btn-result-link" onclick="createShareUrl()">💌 상대방에게 결과 공유 링크 보내기</button>
+                    <button class="btn-nav" onclick="saveAsImage()" style="background: #636e72;">📸 이미지로 저장 (백업)</button>
+                    <button class="btn-nav" style="background:#444;" onclick="location.href=window.location.pathname">다시 하기 ↩️</button>
                 </div>
             </div>
         </div>
@@ -169,138 +153,135 @@
 <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
 <script>
-    function moveSlide(n) {
-        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
-        document.getElementById('slide' + n).classList.add('active');
-        window.scrollTo(0,0);
-    }
-
+    // 타로/사주 데이터 (이전 로직 동일)
     const tarotData = {
-        1: { name: "Ace of Swords", mean: "새로운 확신과 진실", text: "신비로운 1번의 에너지는 날카로운 진실을 향한 갈망을 상징합니다. 현재 휴대폰 번호 끝자리에 깃든 이 기운은 인연 사이에 숨김이 없어야 함을 강력하게 시사하고 있습니다. 거짓이나 미온적인 태도는 오히려 독이 되며, 차라리 뼈아픈 진실이 두 분의 관계를 더 단단하게 묶어주는 열쇠가 될 것입니다. 주도적인 결단이 필요한 시점입니다." },
-        2: { name: "Two of Swords", mean: "갈등 속의 평형", text: "상반된 두 마음이 팽팽하게 맞서고 있는 형국입니다. 상대방과 본인의 생각 차이로 인해 선택을 미루고 있지는 않나요? 번호 끝자리 2번은 '중재'와 '유보'를 의미합니다. 지금은 서둘러 결판을 내려 하기보다는, 서로의 다름을 인정하고 수평적인 관계를 유지하는 것이 최선입니다. 눈을 감고 마음의 소리에 집중해야 할 시기입니다." },
-        3: { name: "Three of Swords", mean: "비가 내리는 마음의 상처", text: "감정적인 예민함이 정점에 달해 있는 번호입니다. 과거의 상처나 사소한 오해가 가슴 깊이 박혀 있을 가능성이 큽니다. 하지만 비가 온 뒤 땅이 굳어지듯, 이 상처는 서로를 더 깊이 이해하고 보듬기 위한 과정에 불과합니다. 날카로운 말보다는 침묵과 포옹이 더 큰 치유가 됩니다. 마음의 감기를 조심하고 따뜻한 위로를 건네세요." },
-        4: { name: "Four of Swords", mean: "고요 속의 고찰", text: "지금은 잠시 멈춰야 할 때입니다. 번호가 말해주는 4의 기운은 '재충전'입니다. 관계가 너무 빠르게 진행되었거나, 잦은 충돌로 피로가 쌓였다면 각자만의 시간을 갖는 것이 오히려 인연을 지키는 길입니다. 명상이나 정적인 취미를 공유하거나, 조용한 곳으로의 힐링 여행이 큰 도움이 됩니다. 서두르지 마세요. 내일의 활력을 위해 잠시 칼을 내려놓는 시기입니다." },
-        5: { name: "Five of Swords", mean: "패배자가 없는 전쟁", text: "자존심이 강한 두 사람이 만났을 때 자주 나타나는 숫자입니다. 이기려는 마음이 앞서 상처를 주고 있지는 않은지 돌아봐야 합니다. 사랑에서의 승리는 상대를 이기는 것이 아니라 내 안의 이기심을 꺾는 것입니다. 한 걸음 물러나 주는 것이 진정으로 인연을 장악하는 길입니다. 소모적인 감정 싸움을 멈추고 더 큰 그림을 바라보세요." },
-        6: { name: "Six of Swords", mean: "회복을 향한 여정", text: "거친 파도를 지나 안식처로 향하는 긍정적인 이동을 뜻합니다. 최근 어려운 시기를 겪었다면 이제는 평화로운 시기로 접어드는 입구에 서 있습니다. 번호의 끝자리가 6번인 당신은 주변의 도움이나 환경의 변화를 통해 상대와의 관계를 개선할 기회를 얻게 됩니다. 과거의 미련은 강물에 흘려보내고, 함께 밝은 미래로 노를 저어가세요." },
-        7: { name: "Seven of Swords", mean: "치밀하고 지혜로운 책략", text: "단순한 사랑 이상의 지적인 밀당이 필요한 인연입니다. 100% 모든 것을 보여주기보다 적절한 신비주의를 유지하는 것이 관계의 긴장감을 유지하는 비결입니다. 가끔은 상대방이 생각지 못한 이벤트를 준비하거나, 본인만의 커리어나 일에 몰두하는 모습을 보여주세요. 너무 쉬운 사랑은 금방 식기 마련입니다. 당신만의 매력을 전략적으로 보여줄 때입니다." },
-        8: { name: "Eight of Swords", mean: "스스로 만든 구석", text: "상대방이 당신을 묶어둔 것이 아니라, 당신의 불안과 의심이 스스로를 감옥에 가두고 있습니다. 번호 8번은 보이지 않는 벽을 상징합니다. 사실 그 벽은 종이로 되어 있어 당신이 마음만 먹으면 언제든 찢고 나갈 수 있습니다. 상대의 반응에 일희일비하지 말고 자존감을 높이세요. 자유로운 영혼이 될 때 비로소 상대방도 당신에게 더 깊이 매료될 것입니다." },
-        9: { name: "Nine of Swords", mean: "밤을 지새우는 고민", text: "생각이 너무 많아 현실을 왜곡하고 있지는 않으신가요? 9번의 에너지는 일어나지도 않은 불행을 미리 걱정하는 기운입니다. 상대방의 사소한 말투 하나에 의미를 부여하며 불면증에 시달리기보다, 차라리 직접 물어보는 용기가 필요합니다. 밤의 고통은 해가 뜨면 사라지듯, 당신의 고민 대부분은 허상입니다. 마음의 짐을 내려놓고 현재의 즐거움에 집중하세요." },
-        0: { name: "Ten of Swords", mean: "새로운 시대의 서막", text: "당신은 이미 바닥을 찍었습니다. 인연에 있어 더 이상 나빠질 수 없는 임계점에 도달했음을 0번(10)의 기운이 말해줍니다. 하지만 이는 곧 완벽한 새로움을 뜻합니다. 낡고 썩은 과거의 연애 습관을 완전히 도려내야만 새로운 살이 돋아납니다. 고통스러운 변화일지라도 그것은 더 찬란한 태양을 맞이하기 위한 필수적인 단계입니다. 이제 다시 일어설 일만 남았습니다." }
+        1: { name: "Ace of Swords", text: "신비로운 1번의 에너지는 날카로운 진실을 향한 갈망을 상징합니다. 현재 휴대폰 번호 끝자리에 깃든 이 기운은 인연 사이에 숨김이 없어야 함을 강력하게 시사하고 있습니다. 거짓이나 미온적인 태도는 오히려 독이 되며, 차라리 뼈아픈 진실이 두 분의 관계를 더 단단하게 묶어주는 열쇠가 될 것입니다. 주도적인 결단이 필요한 시점입니다." },
+        2: { name: "Two of Swords", text: "상반된 두 마음이 팽팽하게 맞서고 있는 형국입니다. 상대방과 본인의 생각 차이로 인해 선택을 미루고 있지는 않나요? 번호 끝자리 2번은 '중재'와 '유보'를 의미합니다. 지금은 서둘러 결판을 내려 하기보다는, 서로의 다름을 인정하고 수평적인 관계를 유지하는 것이 최선입니다. 눈을 감고 마음의 소리에 집중해야 할 시기입니다." },
+        3: { name: "Three of Swords", text: "감정적인 예민함이 정점에 달해 있는 번호입니다. 과거의 상처나 사소한 오해가 가슴 깊이 박혀 있을 가능성이 큽니다. 하지만 비가 온 뒤 땅이 굳어지듯, 이 상처는 서로를 더 깊이 이해하고 보듬기 위한 과정에 불과합니다. 날카로운 말보다는 침묵과 포옹이 더 큰 치유가 됩니다. 마음의 감기를 조심하고 따뜻한 위로를 건네세요." },
+        4: { name: "Four of Swords", text: "지금은 잠시 멈춰야 할 때입니다. 번호가 말해주는 4의 기운은 '재충전'입니다. 관계가 너무 빠르게 진행되었거나, 잦은 충돌로 피로가 쌓였다면 각자만의 시간을 갖는 것이 오히려 인연을 지키는 길입니다. 명상이나 정적인 취미를 공유하거나, 조용한 곳으로의 힐링 여행이 큰 도움이 됩니다. 서두르지 마세요. 내일의 활력을 위해 잠시 칼을 내려놓는 시기입니다." },
+        5: { name: "Five of Swords", text: "자존심이 강한 두 사람이 만났을 때 자주 나타나는 숫자입니다. 이기려는 마음이 앞서 상처를 주고 있지는 않은지 돌아봐야 합니다. 사랑에서의 승리는 상대를 이기는 것이 아니라 내 안의 이기심을 꺾는 것입니다. 한 걸음 물러나 주는 것이 진정으로 인연을 장악하는 길입니다. 소모적인 감정 싸움을 멈추고 더 큰 그림을 바라보세요." },
+        6: { name: "Six of Swords", text: "거친 파도를 지나 안식처로 향하는 긍정적인 이동을 뜻합니다. 최근 어려운 시기를 겪었다면 이제는 평화로운 시기로 접어드는 입구에 서 있습니다. 번호의 끝자리가 6번인 당신은 주변의 도움이나 환경의 변화를 통해 상대와의 관계를 개선할 기회를 얻게 됩니다. 과거의 미련은 강물에 흘려보내고, 함께 밝은 미래로 노를 저어가세요." },
+        7: { name: "Seven of Swords", text: "단순한 사랑 이상의 지적인 밀당이 필요한 인연입니다. 100% 모든 것을 보여주기보다 적절한 신비주의를 유지하는 것이 관계의 긴장감을 유지하는 비결입니다. 가끔은 상대방이 생각지 못한 이벤트를 준비하거나, 본인만의 커리어나 일에 몰두하는 모습을 보여주세요. 너무 쉬운 사랑은 금방 식기 마련입니다. 당신만의 매력을 전략적으로 보여줄 때입니다." },
+        8: { name: "Eight of Swords", text: "상대방이 당신을 묶어둔 것이 아니라, 당신의 불안과 의심이 스스로를 감옥에 가두고 있습니다. 번호 8번은 보이지 않는 벽을 상징합니다. 사실 그 벽은 종이로 되어 있어 당신이 마음만 먹으면 언제든 찢고 나갈 수 있습니다. 상대의 반응에 일희일비하지 말고 자존감을 높이세요. 자유로운 영혼이 될 때 비로소 상대방도 당신에게 더 깊이 매료될 것입니다." },
+        9: { name: "Nine of Swords", text: "생각이 너무 많아 현실을 왜곡하고 있지는 않으신가요? 9번의 에너지는 일어나지도 않은 불행을 미리 걱정하는 기운입니다. 상대방의 사소한 말투 하나에 의미를 부여하며 불면증에 시달리기보다, 차라리 직접 물어보는 용기가 필요합니다. 밤의 고통은 해가 뜨면 사라지듯, 당신의 고민 대부분은 허상입니다. 마음의 짐을 내려놓고 현재의 즐거움에 집중하세요." },
+        0: { name: "Ten of Swords", text: "당신은 이미 바닥을 찍었습니다. 인연에 있어 더 이상 나빠질 수 없는 임계점에 도달했음을 0번(10)의 기운이 말해줍니다. 하지만 이는 곧 완벽한 새로움을 뜻합니다. 낡고 썩은 과거의 연애 습관을 완전히 도려내야만 새로운 살이 돋아납니다. 고통스러운 변화일지라도 그것은 더 찬란한 태양을 맞이하기 위한 필수적인 단계입니다. 이제 다시 일어설 일만 남았습니다." }
     };
 
     function getSajuDesc(name, birth, time, gender, pLast) {
-        if(!birth) return `상대방의 탄생 정보가 신비에 가려져 있어 본인의 기운을 중심으로 분석했습니다. 하지만 상대방의 번호 끝자리 ${pLast}번의 파동만으로도 강렬한 인력을 느낄 수 있습니다. 정적인 상황보다는 동적인 환경에서 인연의 꽃이 피어날 확률이 높습니다.`;
-        
+        if(!birth) return "신비에 싸인 상대방의 사주 기운입니다.";
         const month = parseInt(birth.split('-')[1]);
-        const dayArr = birth.split('-');
-        const timeVal = time || "미시(알 수 없음)";
-        let intro = "", personality = "", energy = "";
+        let base = "";
+        if([3,4,5].includes(month)) base = "부드럽고 유연한 '목(木)'의 기운을 타고난 분입니다. ";
+        else if([6,7,8].includes(month)) base = "열정적이고 화끈한 '화(火)'의 기운을 가진 분입니다. ";
+        else if([9,10,11].includes(month)) base = "냉철하고 단호한 '금(金)'의 기운을 상징하는 분입니다. ";
+        else base = "깊고 지혜로운 '수(水)'의 기운을 가슴에 품은 분입니다. ";
+        
+        return `${base}\n${name}님은 태어난 시간(${time || '모름'})의 정기와 번호 끝자리 ${pLast}번의 파동이 만나 인연에 있어 매우 입체적인 매력을 발산합니다. 특히 올해는 ${gender==='여성'?'관성':'재성'}의 합이 들어와 연인과의 소통이 운명을 가를 것입니다.`;
+    }
 
-        // 오행 분석 (분량 확보)
-        if([3,4,5].includes(month)) {
-            intro = `${name}님은 만물이 소생하는 봄의 정기와 강직한 '목(木)'의 기운을 타고났습니다. 이는 굽히지 않는 대나무처럼 고결한 성정과 타인을 이끄는 리더십을 상징합니다. `;
-            personality = `성격적으로는 추진력이 강하고 정이 많아 한 번 인연을 맺으면 끝까지 책임지려는 성향이 강합니다. 사랑에 있어서는 해바라기 같은 순애보를 보일 때가 많습니다. `;
-            energy = `하지만 나무는 가끔 휴식이 필요합니다. 너무 본인의 생각을 강요하기보다 바람에 흔들리는 유연함을 배운다면 관계는 더욱 풍요로워질 것입니다. `;
-        } else if([6,7,8].includes(month)) {
-            intro = `${name}님은 뜨겁게 타오르는 여름의 '화(火)' 기운을 지닌 열정적인 영혼입니다. 당신의 주변에는 늘 사람들이 모여들며 활기찬 에너지가 넘칩니다. `;
-            personality = `뒤끝이 없고 시원시원한 성격이지만, 가끔 불처럼 화를 낼 때도 있습니다. 그러나 그 속마음은 누구보다 따뜻하고 여립니다. 연애 시작 초기에는 누구보다 화끈하게 타오릅니다. `;
-            energy = `불은 연료가 없으면 금방 식습니다. 상대방과의 지속적인 소통과 정서적 교감이 당신의 열정을 유지하는 원동력이 됩니다. 감정의 급물살을 타지 않도록 주의하세요. `;
-        } else if([9,10,11].includes(month)) {
-            intro = `${name}님은 결실을 맺는 가을의 '금(金)' 기운을 타고나 냉철한 이성과 단호함을 겸비하고 있습니다. 맺고 끊음이 확실하며 정의로운 성품입니다. `;
-            personality = `연애에 있어서도 밀당보다는 확실한 답을 원하며, 예의 어긋나는 행동을 매우 싫어합니다. 겉은 차가운 금속 같지만 속은 황금처럼 찬란하고 값진 마음을 품고 있습니다. `;
-            energy = `가끔은 본인의 잣대로 상대를 평가하려 할 수 있습니다. 차가운 칼날보다는 부드러운 보석의 광채로 상대를 비춰주세요. 포용력이 당신의 최고의 무기가 됩니다. `;
-        } else {
-            intro = `${name}님은 깊은 바다와 같은 겨울의 '수(水)' 기운을 지닌 지혜로운 책사 스타일입니다. 유연하고 적응력이 뛰어나며 상대의 마음을 읽는 통찰력이 탁월합니다. `;
-            personality = `조용히 상대를 관찰하고 필요한 순간에 결정적인 조언을 건네는 당신은 인연에게 있어 매우 든든한 버팀목입니다. 하지만 본인의 속마음은 잘 드러내지 않아 상대가 답답해할 수 있습니다. `;
-            energy = `깊은 물은 고이면 썩기 마련입니다. 마음속에 담아둔 불만이나 슬픔이 있다면 용기 내어 표현해 보세요. 흘러가는 물처럼 감정을 발산할 때 인연은 더욱 신선해집니다. `;
-        }
+    // 결과 출력 통합 함수
+    function showResult(d) {
+        document.getElementById('inputLayer').style.display = 'none';
+        document.getElementById('resultLayer').style.display = 'block';
+        document.getElementById('resSubtitle').innerText = `${d.n1} 님 & ${d.n2} 님 리포트`;
 
-        let timeEffect = `\n\n특히 태어난 시간(${timeVal})의 기운이 현재 사용하는 번호의 파동과 공명하여, 올해는 '${gender === '여성' ? '관성(연애운)' : '재성(애정운)'}'의 흐름이 매우 거세게 들어오고 있습니다. 이는 단순한 우연이 아니라 하늘이 맺어준 정해진 타이밍에 두 분이 마주했음을 암시합니다.`;
+        const p1Last = parseInt(d.p1.slice(-1)) || 0;
+        const p2Last = parseInt(d.p2.slice(-1)) || 0;
 
-        return intro + personality + energy + timeEffect;
+        document.getElementById('numAnalysis').innerHTML = `<strong>[${d.n1}님]</strong><br>${tarotData[p1Last].text}<br><br><strong>[${d.n2}님]</strong><br>${tarotData[p2Last].text}`;
+        document.getElementById('sajuTitle1').innerText = `👤 ${d.n1}님의 사주`;
+        document.getElementById('sajuContent1').innerText = getSajuDesc(d.n1, d.b1, d.t1, d.g1, p1Last);
+        document.getElementById('sajuTitle2').innerText = `👤 ${d.n2}님의 사주`;
+        document.getElementById('sajuContent2').innerText = getSajuDesc(d.n2, d.b2, d.t2, d.g2, p2Last);
+        
+        let score = 75 + (p1Last % 5) + (p2Last % 5);
+        if(p1Last === p2Last) score += 10;
+        document.getElementById('resScore').innerText = score + "%";
+        document.getElementById('finalReview').innerText = `${d.n1}님과 ${d.n2}님의 성좌 결합은 매우 희귀한 조화를 이룹니다. 서로의 부족한 오행을 채워주는 구조이며, 특히 ${d.n1}님의 이성이 ${d.n2}님의 감성을 안정시키기에 최적의 조건입니다.`;
+        document.getElementById('finalAdvice').innerText = "1. 대화 시 논리보다 공감을 우선하세요.\n2. 함께 물이 있는 곳으로 산책을 가시면 기운이 정화됩니다.\n3. 두 분은 말보다는 눈빛으로 통하는 깊은 인연입니다.";
     }
 
     function handleAnalysis() {
-        const n1 = document.getElementById('myName').value;
-        const p1 = document.getElementById('myPhone').value.replace(/[^0-9]/g, '');
-        const b1 = document.getElementById('myBirth').value;
-        const t1 = document.getElementById('myTime').value;
-        const g1 = document.getElementById('myGender').value;
-
-        const n2 = document.getElementById('yourName').value;
-        const p2 = document.getElementById('yourPhone').value.replace(/[^0-9]/g, '');
-        const b2 = document.getElementById('yourBirth').value;
-        const t2 = document.getElementById('yourTime').value;
-        const g2 = document.getElementById('yourGender').value;
-
-        // 구글 폼 전송
-        document.getElementById('gName').value = `${n1} | ${n2}`;
-        document.getElementById('gPhone').value = `${p1} | ${p2}`;
-        document.getElementById('gDetail').value = `본인:${b1}(${t1})/${g1} | 상대:${b2}(${t2})/${g2}`;
+        const data = {
+            n1: document.getElementById('myName').value,
+            p1: document.getElementById('myPhone').value,
+            b1: document.getElementById('myBirth').value,
+            t1: document.getElementById('myTime').value,
+            g1: document.getElementById('myGender').value,
+            n2: document.getElementById('yourName').value,
+            p2: document.getElementById('yourPhone').value,
+            b2: document.getElementById('yourBirth').value,
+            t2: document.getElementById('yourTime').value,
+            g2: document.getElementById('yourGender').value
+        };
+        // 구글 폼 전송용
+        document.getElementById('gName').value = data.n1 + " | " + data.n2;
+        document.getElementById('gPhone').value = data.p1 + " | " + data.p2;
+        document.getElementById('gDetail').value = JSON.stringify(data);
         document.getElementById('loveForm').submit();
 
-        showResult(n1, p1, b1, t1, g1, n2, p2, b2, t2, g2);
+        showResult(data);
+        // 공유 링크용 데이터를 URL에 저장 (상태 보존)
+        currentData = data;
     }
 
-    function showResult(n1, p1, b1, t1, g1, n2, p2, b2, t2, g2) {
-        document.getElementById('resSubtitle').innerText = `${n1}님과 ${n2}님의 천문 동조 리포트`;
-        const p1Last = parseInt(p1.slice(-1)) || 0;
-        const p2Last = parseInt(p2.slice(-1)) || 0;
-        const tarot1 = tarotData[p1Last];
-        const tarot2 = tarotData[p2Last];
+    let currentData = null;
+    function moveSlide(n) {
+        document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+        document.getElementById('slide' + n).classList.add('active');
+    }
 
-        document.getElementById('numAnalysis').innerHTML = `
-            <div style="margin-bottom:15px;"><strong>[${n1}님: ${tarot1.name}]</strong><br>${tarot1.text}</div>
-            <div style="border-top:1px dashed rgba(255,255,255,0.2); padding-top:15px;"><strong>[${n2}님: ${tarot2.name}]</strong><br>${tarot2.text}</div>
-        `;
+    // 결과 링크 생성 (Base64 인코딩으로 데이터 주소에 삽입)
+    function createShareUrl() {
+        const json = JSON.stringify(currentData);
+        const hash = btoa(encodeURIComponent(json)); // 데이터를 안전하게 인코딩
+        const shareUrl = window.location.origin + window.location.pathname + "?res=" + hash;
         
-        document.getElementById('sajuTitle1').innerText = `👤 ${n1}님의 운명적 성향`;
-        document.getElementById('sajuContent1').innerText = getSajuDesc(n1, b1, t1, g1, p1Last);
-        document.getElementById('sajuTitle2').innerText = `👤 ${n2}님의 운명적 성향`;
-        document.getElementById('sajuContent2').innerText = getSajuDesc(n2, b2, t2, g2, p2Last);
-
-        let score = 70 + (p1Last % 4) * 3 + (p2Last % 4) * 3;
-        if(p1Last === p2Last) score += 10;
-        if(score > 99) score = 99;
-        document.getElementById('resScore').innerText = score + "%";
-
-        // 총평 및 조언 대폭 확장
-        document.getElementById('finalReview').innerText = `두 분의 결합 점수는 ${score}%로, 이는 '운명적 상호 보완'을 의미하는 매우 희귀한 수치입니다. ${n1}님의 냉철한 판단력과 ${n2}님의 정서적 유연함이 만났을 때, 서로의 단점이 가려지고 장점이 극대화되는 시너지가 발생합니다. \n\n단순히 즐거운 시간을 보내는 연인을 넘어, 서로의 인생에 깊은 가르침을 주고받는 '영혼의 동반자'적 기질이 강합니다. 초기에는 서로의 다름 때문에 마찰이 있을 수 있으나, 시간이 흐를수록 서로의 빈틈을 채워주는 퍼즐 조각 같은 인연이 될 것입니다. 하늘이 내린 기회를 놓치지 마세요.`;
-        
-        document.getElementById('finalAdvice').innerText = `1. [최상의 시너지]: 두 분은 함께 새로운 정보를 습득하거나 여행을 떠날 때 인연의 파동이 최고조에 달합니다. 정적인 데이트보다는 활동적이고 생산적인 활동을 공유하세요.\n\n2. [주의할 한마디]: 양쪽 모두 번호에 '검(Sword)'의 기운이 섞여 있어 자칫하면 말로 서로에게 큰 상처를 줄 수 있습니다. 갈등 상황에서는 3초만 생각하고 말하는 지혜가 필요합니다. \n\n3. [화합의 비책]: 매달 한 번씩은 '고마운 점 3가지'를 서로 나누는 시간을 가지세요. 수비학적으로 흩어지기 쉬운 기운을 모아주는 가장 강력한 의식이 될 것입니다. 서로의 '다름'을 '틀림'으로 오해하지 않는다면 이 사랑은 영원히 빛날 것입니다.`;
-
-        document.getElementById('inputLayer').style.display = 'none';
-        document.getElementById('resultLayer').style.display = 'block';
-    }
-
-    // 결과 이미지 저장 함수
-    function saveAsImage() {
-        const area = document.getElementById('captureArea');
-        html2canvas(area, {
-            backgroundColor: "#1a1a2e",
-            useCORS: true,
-            scale: 2
-        }).then(canvas => {
-            const link = document.createElement('downloadLink');
-            const imgData = canvas.toDataURL('image/png');
-            const a = document.createElement('a');
-            a.href = imgData;
-            a.download = `Destiny_Analysis_Report.png`;
-            a.click();
-        });
-    }
-
-    // 링크 복사 함수
-    function copyLink() {
         const dummy = document.createElement("input");
-        const text = window.location.href;
         document.body.appendChild(dummy);
-        dummy.value = text;
+        dummy.value = shareUrl;
         dummy.select();
         document.execCommand("copy");
         document.body.removeChild(dummy);
-        alert("테스트 링크가 복사되었습니다! 상대방에게 공유해보세요. ✨");
+        alert("결과 공유 링크가 복사되었습니다! 상대방에게 전달하면 바로 분석 결과가 보입니다. 💌");
+    }
+
+    // URL 파라미터 확인 후 결과 자동 로드
+    window.onload = function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const resHash = urlParams.get('res');
+        if (resHash) {
+            try {
+                const decoded = decodeURIComponent(atob(resHash));
+                const data = JSON.parse(decoded);
+                currentData = data;
+                showResult(data);
+            } catch(e) { console.error("데이터 로드 실패"); }
+        }
+    }
+
+    // 이미지 저장 (슬라이드 전체 캡쳐 보정)
+    async function saveAsImage() {
+        const area = document.getElementById('captureArea');
+        // 캡쳐를 위해 모든 슬라이드 일시적으로 활성화
+        const slides = document.querySelectorAll('.slide');
+        slides.forEach(s => s.style.display = 'block');
+        
+        const canvas = await html2canvas(area, {
+            backgroundColor: "#1a1a2e",
+            scale: 2,
+            logging: false,
+            useCORS: true
+        });
+        
+        slides.forEach((s, idx) => { if(idx !== 0) s.style.display = 'none'; }); // 원상복구
+        
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = '운명리포트.png';
+        link.click();
     }
 </script>
+
 </body>
 </html>
