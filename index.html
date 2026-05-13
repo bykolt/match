@@ -73,13 +73,13 @@
 
 <div class="container">
     <div id="inputLayer">
-        <h1>✨ 운명의 성좌 분석 ✨</h1>
+        <h1>✨ 번호 궁합 분석 ✨</h1>
         <form id="loveForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeKkP4HuJ5J4jW_XOrs2ryEpfSeuWn5VvbaOmMQhHKTmAxUpg/formResponse" method="POST" target="hidden_iframe">
             
             <div class="section">
-                <div class="section-title">🔮 나의 성좌</div>
+                <div class="section-title">🔮 내 번호와 사주에 담긴 운명</div>
                 <input type="text" id="myName" placeholder="당신의 성함 (필수)" required>
-                <input type="tel" id="myPhone" placeholder="휴대폰 번호 (01012345678)" required>
+                <input type="tel" id="myPhone" placeholder="당신의 번호 (필수)" required>
                 <div class="flex-row">
                     <div class="flex-item"><label>생년월일</label><input type="date" id="myBirth" required></div>
                     <div class="flex-item"><label>태어난 시간</label><input type="time" id="myTime"></div>
@@ -88,7 +88,7 @@
             </div>
 
             <div class="section">
-                <div class="section-title">🌟 상대의 성좌</div>
+                <div class="section-title">🌟 상대방의 번호와 사주에 담긴 운명</div>
                 <input type="text" id="yourName" placeholder="상대방 성함 (필수)" required>
                 <input type="tel" id="yourPhone" placeholder="상대방 번호 (필수)" required>
                 <div class="flex-row">
@@ -141,7 +141,7 @@
             <button id="eventBtn" class="event-banner animate-pulse" onclick="applyEvent()">🎁 [선착순] 무료 추가 사주 분석 응모하기</button>
 
             <div class="share-group">
-                <button class="btn-share-link" id="shareBtn" onclick="generateShareUrl()">💌 상대방에게 결과 전송하기</button>
+                <button class="btn-share-link" id="shareBtn" onclick="generateShareUrl()">💌 상대방 및 친구에게 결과 전송하기</button>
                 <button class="btn-nav" style="background:#444;" onclick="location.href=window.location.pathname">새로 분석하기 ↩️</button>
             </div>
         </div>
@@ -241,9 +241,9 @@
         if(!cachedData) return;
         cachedData.event = "무료 사주 응모 완료";
         sendToGoogle(cachedData);
-        alert("✨ 응모가 완료되었습니다! \n순차적으로 분석하여 연락드리겠습니다.");
+        alert("✨ 응모가 완료되었습니다! \n 추첨을 통해 연락드리겠습니다.");
         const btn = document.getElementById('eventBtn');
-        btn.innerText = "✅ 응모 완료 (분석 대기 중)";
+        btn.innerText = "✅ 응모 완료 (우주의 기운이 함께 하는 중)";
         btn.classList.remove('animate-pulse');
         btn.style.background = "#bdc3c7";
         btn.onclick = null;
